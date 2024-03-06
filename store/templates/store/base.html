@@ -1,0 +1,55 @@
+{% load static %}
+{% load cache %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.css' %}">
+    <title>{% block title %}{% endblock %}</title>
+</head>
+<body>
+<div class="d-flex flex-column vh-100">
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-dark bg-dark ">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="{% url 'index' %}">Trade</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#navbarSupportedContent"
+                        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <div class="navbar-nav ms-auto mb-2 mb-sm-0">
+                        {% if user.is_authenticated %}
+                            <div class="nav-item">
+                                <a class="nav-link active" href="{% url 'profile' %}">Профиль</a>
+                            </div>
+                        {% else %}
+                            <div class="nav-item">
+                                <a class="nav-link active" href="{% url 'user_register' %}">Регистрация</a>
+                            </div>
+                            <div class="nav-item">
+                                <a class="nav-link active" href="{% url 'user_login' %}">Войти</a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+    {% block content %}
+    {% endblock %}
+</div>
+{#Scroll#}
+<div class="scroll-wrapper js-scroll d-none">
+    <div class="d-flex justify-content-center sticky mt-2">
+        <h6 style="opacity: 0.5;">ВВЕРХ</h6>
+    </div>
+</div>
+</body>
+<script src="{% static 'bootstrap/js/bootstrap.bundle.js' %}"></script>
+{% block script %}
+{% endblock %}
+</html>

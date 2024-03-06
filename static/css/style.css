@@ -1,0 +1,50 @@
+* {
+    box-sizing: border-box;
+}
+
+nav, footer {
+    z-index: 1;
+}
+
+.custom-form {
+    width: 35% !important;
+}
+
+.custom-search {
+    width: 50% !important;
+}
+
+@media screen and (max-width: 768px) {
+    .custom-form {
+        width: 75% !important;
+    }
+
+    .custom-search {
+        width: 100% !important;
+    }
+}
+
+/* Scroll */
+
+.scroll-wrapper {
+    background-color: rgba(33, 37, 41, 0.1);
+    position: fixed;
+    right: 0;
+    top: 0;
+    height: 100vh;
+    z-index: 0;
+    width: 5vw;
+    transition: 0.2s all ease;
+}
+
+.scroll-wrapper:hover {
+    cursor: pointer;
+    background-color: rgba(33, 37, 41, 0.2);
+}
+
+@media screen and (max-width: 768px) {
+    .scroll-wrapper {
+        display: none !important;
+    }
+}
+

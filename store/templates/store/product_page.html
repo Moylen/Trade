@@ -1,0 +1,137 @@
+{% extends 'store/base.html' %}
+
+{% load static %}
+{% load tz %}
+
+{% block title %}{{ product.title }}{% endblock %}
+
+{% block content %}
+    <main class="flex-grow-1 flex-shrink-0">
+        <div class="ps-lg-5 pb-2 container-fluid mt-4 pb-2">
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="flex-column">
+                        <h2 class="mb-4">{{ product.title }}</h2>
+                        <div id="carouselExampleFade" class="w-100 carousel carousel-dark slide"
+                             data-bs-ride="carousel">
+                            <div class="carousel-inner">
+                                {% for i in images %}
+                                    {% if forloop.first %}
+                                        <div class="carousel-item active">
+                                            <img src="{{ i.img.url }}" style="max-height: 512px"
+                                                 class="d-block m-auto img-fluid" alt="...">
+                                        </div>
+                                    {% else %}
+                                        <div class="carousel-item">
+                                            <img src="{{ i.img.url }}" style="max-height: 512px"
+                                                 class="d-block m-auto img-fluid" alt="...">
+                                        </div>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                            <button class="carousel-control-prev" type="button"
+                                    data-bs-target="#carouselExampleFade"
+                                    data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Previous</span>
+                            </button>
+                            <button class="carousel-control-next" type="button"
+                                    data-bs-target="#carouselExampleFade"
+                                    data-bs-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Next</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3">
+                    <div class="flex-column">
+                        <h2 class="mt-lg-0 mt-4">{{ product.price }} ₽</h2>
+                        <div class="d-flex flex-column justify-content-center align-items-center w-100 bg-primary p-2 mt-4 text-light">
+                            <h6 class="mb-1">Позвонить</h6>
+                            <h6 class="m-0">{{ account.phone }}</h6>
+                        </div>
+                        {% if favourite %}
+                            <a href="{% url 'product_favourite'  product.pk %}"
+                               class="btn btn-outline-danger mt-3 w-100">Удалить из избранного</a>
+                        {% else %}
+                            <a href="{% url 'product_favourite'  product.pk %}"
+                               class="btn btn-outline-secondary mt-3 w-100">Добавить в избранное</a>
+                        {% endif %}
+                        <div>
+                            <h3 class="mt-4">Продавец</h3>
+                            <div class="p-1">
+                                <div class="d-flex flex-column">
+                                    {% if account.account.first_name != '' %}
+                                        <span class="mb-1"
+                                              style="font-size: 1.1rem;">{{ account.account.first_name }}</span>
+                                    {% else %}
+                                        <span class="mb-1" style="font-size: 1.1rem;">Без имени</span>
+                                    {% endif %}
+                                    {#                                    <span class="mb-1" style="font-size: 1.1rem;">Частное лицо</span>#}
+                                    <span style="font-size: 1.1rem;">Зарегистрирован с {{ account.account.date_joined|date }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="flex-column">
+                        <div>
+                            <h2 class="mt-4 mb-4">Адрес</h2>
+                            <span>{{ product.address }}</span>
+                        </div>
+                        <div>
+                            <h2 class="mt-4 mb-4">Описание</h2>
+                            <span>{{ product.description }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="flex-column">
+                        <h2 class="mt-4 mb-4">Комментарии</h2>
+                        {% if user.is_authenticated %}
+                            <form class="d-flex flex-column mb-4" method="post">
+                                {% csrf_token %}
+                                {{ CommentForm.comment }}
+                                <button class="btn btn-outline-success mt-2 align-self-end" type="submit">Отправить
+                                </button>
+                            </form>
+                        {% endif %}
+                        {% for c in comments %}
+                            <div class="mt-4 border-top pt-3">
+                                <div class="d-flex justify-content-between mb-1">
+                                    {% if c.user.first_name and c.user.last_name %}
+                                        <span>{{ c.user.first_name }} {{ c.user.last_name }}</span>
+                                    {% else %}
+                                        <span>Без имени</span>
+                                    {% endif %}
+                                    <span>{{ c.date_create }}</span>
+                                </div>
+                                <div>
+                                    <span>{{ c.comment }}</span>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <footer class="flex-grow-0 flex-shrink-0">
+        <div class="bg-dark text-center text-lg-start">
+            <div class="d-flex justify-content-between text-light p-3" style="background-color: rgba(0, 0, 0, 0.2);">
+                <a class="text-light text-decoration-none" href="{% url 'index' %}">Главная</a>
+                <a class="text-light text-decoration-none" href="{% url 'index' %}">Профиль</a>
+            </div>
+        </div>
+    </footer>
+{% endblock %}
+
+{% block script %}
+    <script src="{% static 'js/scrollUp.js' %}"></script>
+{% endblock %}

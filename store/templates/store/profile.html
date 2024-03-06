@@ -1,0 +1,163 @@
+{% extends 'store/base.html' %}
+
+{% load static %}
+
+{% block title %}Профиль{% endblock %}
+
+{% block content %}
+    <main class="flex-grow-1 flex-shrink-0">
+        <div class="container-fluid flex-column h-100">
+            {# NavTabs #}
+            <div class="d-flex justify-content-center align-items-center mb-4">
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="account-tab" data-bs-toggle="tab" data-bs-target="#account"
+                                type="button" role="tab" aria-controls="account" aria-selected="true"
+                                style="font-size: 0.84rem">Аккаунт
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="favourite-tab" data-bs-toggle="tab" data-bs-target="#favourite"
+                                type="button" role="tab" aria-controls="favourite" aria-selected="false"
+                                style="font-size: 0.84rem">Избранное
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="advertisement-tab" data-bs-toggle="tab"
+                                data-bs-target="#advertisement"
+                                type="button" role="tab" aria-controls="advertisement" aria-selected="false"
+                                style="font-size: 0.84rem">Объявления
+                        </button>
+                    </li>
+                </ul>
+            </div>
+            {# Tabs #}
+            <div class="tab-content">
+                <div id="account" class="tab-pane fade show active" role="tabpanel" aria-labelledby="account-tab">
+                    <div class="d-flex align-items-center justify-content-center w-100">
+                        <form method="post" class="col-lg-6 row g-3">
+                            {% csrf_token %}
+                            {% if EditUserAccountForm.phone.errors %}
+                                <div class="alert alert-danger" role="alert">
+                                    {{ EditUserAccountForm.phone.errors.as_text }}
+                                </div>
+                            {% endif %}
+                            <div class="col-md-6">
+                                {{ EditUserForm.first_name }}
+                            </div>
+                            <div class="col-md-6">
+                                {{ EditUserForm.last_name }}
+                            </div>
+                            <div class="col-12">
+                                {{ EditUserAccountForm.phone }}
+                            </div>
+                            <div class="col-12 d-flex justify-content-between">
+                                <button type="submit" class="btn btn-outline-success me-1">Сохранить</button>
+                                <div class="d-flex">
+                                    <a href="{% url 'user_change_pass' %}" class="btn btn-outline-dark me-1">Смена
+                                        пароля</a>
+                                    <a href="{% url 'user_logout' %}"
+                                       class="btn btn-danger d-flex align-items-center">Выйти</a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div id="favourite" class="tab-pane fade" role="tabpanel" aria-labelledby="favourite-tab">
+                    <div class="flex-column align-items-center w-100">
+                        {% for f in favourites %}
+                            <div class="d-flex flex-column align-items-center">
+                                <div class="col-md-9">
+                                    <div class="d-flex justify-content-between border p-3">
+                                        <a class="d-flex align-items-center text-decoration-none me-2"
+                                           href="{% url 'product' f.product.pk %}">{{ f.product.title }}</a>
+                                        <a href="{% url 'product_favourite' f.product.pk %}"
+                                           class="btn btn-danger d-flex align-items-center align-self-center">Удалить</a>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                        {% if not favourites.exists %}
+                            <div class="d-flex flex-column align-items-center">
+                                <div class="col-md-9">
+                                    <h2 class="d-flex justify-content-center">Список избранного пуст</h2>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div id="advertisement" class="tab-pane fade" role="tabpanel"
+                     aria-labelledby="advertisement-tab">
+                    <div class="flex-column align-items-center w-100">
+                        {# Button and modal #}
+                        <div class="d-flex justify-content-center mb-3">
+                            <button type="button" class="btn btn-success" data-bs-toggle="modal"
+                                    data-bs-target="#createProductModal">
+                                + Добавить
+                            </button>
+                            <div class="modal fade" id="createProductModal" tabindex="-1"
+                                 aria-labelledby="createProductModal"
+                                 aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLabel">Новое объявление</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form action="{% url 'create_product_handler' %}" method="post"
+                                                  enctype="multipart/form-data">
+                                                {% csrf_token %}
+                                                <div class="form-group mb-3">
+                                                    {{ ProductForm.title }}
+                                                </div>
+                                                <div class="form-group mb-3">
+                                                    {{ ProductForm.price }}
+                                                </div>
+                                                <div class="form-group mb-3">
+                                                    {{ ProductForm.description }}
+                                                </div>
+                                                <div class="form-group mb-3">
+                                                    {{ ProductForm.address }}
+                                                </div>
+                                                <div class="form-group mb-3">
+                                                    {{ ProductForm.category }}
+                                                </div>
+                                                <div class="form-group mb-3">
+                                                    <label for="" class="form-label">Изображения</label>
+                                                    {{ ImageForm.img1 }}
+                                                </div>
+                                                <div class="form-group mb-3">
+                                                    {{ ImageForm.img2 }}
+                                                </div>
+                                                <div class="form-group mb-3">
+                                                    {{ ImageForm.img3 }}
+                                                </div>
+                                                <div class="form-group mb-3">
+                                                    {{ ImageForm.img4 }}
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="submit" class="btn btn-success">Сохранить
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="js-advertisement">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+{% endblock %}
+
+{% block script %}
+    <script src="{% static 'js/scrollUp.js' %}"></script>
+    <script src="{% static 'js/advertisementAJAX.js' %}"></script>
+{% endblock %}
